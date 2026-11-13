@@ -1,0 +1,36 @@
+{% extends 'todos/base.html' %}
+
+{% block title %}Todo List{% endblock %}
+
+{% block content %}
+<h2>My Todos</h2>
+
+<a href="{% url 'todo_create' %}">Add Todo</a>
+
+<hr>
+
+{% for todo in todos %}
+<div class="todo">
+    <h3>
+        {% if todo.completed %}
+            <del>{{ todo.title }}</del>
+        {% else %}
+            {{ todo.title }}
+        {% endif %}
+    </h3>
+
+    <!-- Both buttons change data, so each is a small POST form -->
+    <form method="post" action="{% url 'todo_toggle' todo.id %}">
+        {% csrf_token %}
+        <button type="submit">{% if todo.completed %}Undo{% else %}Complete{% endif %}</button>
+    </form>
+
+    <form method="post" action="{% url 'todo_delete' todo.id %}" data-confirm="Delete this todo?">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+</div>
+{% empty %}
+<p>No todos yet.</p>
+{% endfor %}
+{% endblock %}
